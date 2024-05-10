@@ -1,0 +1,84 @@
+﻿@model IEnumerable<Applicant>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<p>
+    @Html.ActionLink("Create","Create",null,new{@class="btn btn-primary btn-xs"})
+</p>
+<h3>Employee List</h3>
+@foreach (var item in Model)
+{
+    <div class="card mb-2">
+        <div class="card-header d-flex justify-content-between">
+            <div>
+                <img src="~/images/@item.ImageUrl" width="50" height="50" class="rounded" /><br />
+                <label class="mr-2"><b>Applicant Name:</b>@Html.DisplayFor(a => item.ApplicantName)</label><br />
+                <label class="mr-2"><b>Designation: </b>@Html.DisplayFor(a => item.DesignationName)</label><br />
+                <label class="mr-2"><b>date of Birth: </b>@Html.DisplayFor(a => item.Dob)</label> <br /><label class="mr-2"><b>Active: </b>@Html.DisplayFor(a => item.IsActive)</label>
+            </div>
+            <div>
+                <a href="@Url.Action("Edit","Resume", new {id=item.Id})" onclick="EditCall(@item.Id)" id="btnEnterEdit" class="btn btn-outline-success">Edit</a>
+                <a href="@Url.Action("Delete","Resume", new {id=item.Id})" onclick="DeleteCall(@item.Id)" id="btnEntryDelete" class="btn btn-outline-danger">Delete</a>
+
+            </div>
+            <div>
+                <div class="card-body">
+                    <table class="table-bordered table-striped table-sm">
+                        <thead  class="table-primary">
+                            <tr>
+                                <th>
+                                    Company Name
+                                </th>
+                                <th>
+                                    Years Worked
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var ex in item.Experiances)
+                        {
+                            <tr>
+                                <td>@Html.DisplayFor(x=>ex.CompanyName)</td>
+                                <td>@Html.DisplayFor(x => ex.YearsWorked)</td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<script>
+    function DeleteCall(id) {
+        $('btnEntryDelete').click(function (e) {
+            e.preventDefault();
+            $.ajax(
+                {
+                    type:"POST",
+                    url:'@Url.Action("Delete","Resume")',
+                    data: JSON.stringify({ id :id}),
+                    dataType:"json",
+                    contentType:"application/json;charset=utf-8",
+                    success: function () { alret("Deleted"); },
+                    error: function () { alert("Error Occured"); }
+                }            
+            );
+        })
+    }
+
+    function EditCall(id) {
+        $('btnEnterEdit').click(function (e) {
+            e.preventDefault();
+            $.ajax({
+                type:"POST",
+                url:'@Url.Action("Edit","Resume")',
+                data: JSON.stringify({id:id}),
+                dataType:json,
+                contentType:"application/json; charset=utf-8",
+                success: function () {alert("Edit") },
+                error: function () { alert("Error occured"); }
+            });
+        }
+    }
+</script>
